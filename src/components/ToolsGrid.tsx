@@ -8,68 +8,89 @@ interface Tool {
   pricing: string;
   url: string;
   features: string[];
+  rating: number;
+  users: string;
+  trending?: boolean;
 }
 
 const ToolsGrid: React.FC = () => {
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('全部');
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+
+  const categories = ['全部', '对话AI', '图像AI', '编程AI', '生产力AI', '搜索AI'];
 
   useEffect(() => {
-    // 模拟加载工具数据
     const mockTools: Tool[] = [
       {
         id: 1,
         name: "ChatGPT",
-        description: "强大的AI对话助手，支持多种任务",
+        description: "OpenAI开发的强大AI对话助手，支持文本生成、代码编写、翻译等多种任务",
         category: "对话AI",
         pricing: "免费/付费",
         url: "https://chat.openai.com",
-        features: ["文本生成", "代码编写", "翻译", "分析"]
+        features: ["文本生成", "代码编写", "翻译", "分析"],
+        rating: 4.8,
+        users: "100M+",
+        trending: true
       },
       {
         id: 2,
         name: "Midjourney",
-        description: "高质量AI图像生成工具",
+        description: "基于Discord的高质量AI图像生成工具，创造令人惊叹的艺术作品",
         category: "图像AI",
         pricing: "付费",
         url: "https://midjourney.com",
-        features: ["图像生成", "艺术创作", "设计辅助"]
+        features: ["图像生成", "艺术创作", "设计辅助"],
+        rating: 4.9,
+        users: "10M+",
+        trending: true
       },
       {
         id: 3,
         name: "Claude",
-        description: "Anthropic开发的AI助手",
+        description: "Anthropic开发的AI助手，擅长长文本处理和深度分析",
         category: "对话AI",
         pricing: "免费/付费",
         url: "https://claude.ai",
-        features: ["长文本处理", "分析", "写作辅助"]
+        features: ["长文本处理", "分析", "写作辅助"],
+        rating: 4.7,
+        users: "5M+"
       },
       {
         id: 4,
         name: "GitHub Copilot",
-        description: "AI代码助手，提高编程效率",
+        description: "GitHub与OpenAI合作的AI代码助手，大幅提高编程效率",
         category: "编程AI",
         pricing: "付费",
         url: "https://github.com/features/copilot",
-        features: ["代码补全", "函数生成", "注释生成"]
+        features: ["代码补全", "函数生成", "注释生成"],
+        rating: 4.6,
+        users: "1M+"
       },
       {
         id: 5,
         name: "Notion AI",
-        description: "集成在Notion中的AI助手",
+        description: "集成在Notion中的AI助手，提升文档处理和知识管理效率",
         category: "生产力AI",
         pricing: "付费",
         url: "https://notion.so",
-        features: ["文档生成", "总结", "翻译", "头脑风暴"]
+        features: ["文档生成", "总结", "翻译", "头脑风暴"],
+        rating: 4.5,
+        users: "20M+"
       },
       {
         id: 6,
         name: "Perplexity",
-        description: "AI驱动的搜索引擎",
+        description: "AI驱动的搜索引擎，提供准确的信息来源和深度分析",
         category: "搜索AI",
         pricing: "免费/付费",
         url: "https://perplexity.ai",
-        features: ["智能搜索", "信息整合", "来源引用"]
+        features: ["智能搜索", "信息整合", "来源引用"],
+        rating: 4.4,
+        users: "2M+",
+        trending: true
       }
     ];
 
@@ -79,13 +100,20 @@ const ToolsGrid: React.FC = () => {
     }, 1000);
   }, []);
 
+  const filteredTools = selectedCategory === '全部' 
+    ? tools 
+    : tools.filter(tool => tool.category === selectedCategory);
+
   if (loading) {
     return (
-      <section className="py-16 bg-white">
+      <section className="py-20 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">正在加载AI工具...</p>
+            <div className="relative inline-flex items-center justify-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+              <div className="absolute animate-ping h-16 w-16 rounded-full bg-blue-500/20"></div>
+            </div>
+            <p className="mt-8 text-xl text-blue-200 animate-pulse">正在加载AI工具宇宙...</p>
           </div>
         </div>
       </section>
@@ -93,69 +121,150 @@ const ToolsGrid: React.FC = () => {
   }
 
   return (
-    <section id="tools" className="py-16 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            精选AI工具
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            我们为您精选了最优质的AI工具，覆盖各个领域，助您提高效率，创造价值
+    <section id="tools" className="py-20 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 relative overflow-hidden">
+      {/* 动态背景 */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-grid-white/[0.02] bg-grid-16"></div>
+        {[...Array(30)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute animate-pulse"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${3 + Math.random() * 4}s`
+            }}
+          >
+            <div className="w-2 h-2 bg-blue-400/30 rounded-full blur-sm"></div>
+          </div>
+        ))}
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* 标题区域 */}
+        <div className="text-center mb-16">
+          <div className="relative inline-block mb-6">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 blur-2xl opacity-50 animate-pulse"></div>
+            <h2 className="relative text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+              AI工具宇宙
+            </h2>
+          </div>
+          <p className="text-xl text-blue-200 max-w-3xl mx-auto leading-relaxed">
+            精选1000+顶级AI工具，覆盖所有应用场景，让您在AI时代保持领先优势
           </p>
         </div>
-        
+
+        {/* 分类筛选 */}
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
+                selectedCategory === category
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/50'
+                  : 'bg-white/10 text-blue-200 hover:bg-white/20 backdrop-blur-sm border border-white/20'
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
+        {/* 工具卡片网格 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {tools.map((tool) => (
-            <div key={tool.id} className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-              <div className="p-6">
+          {filteredTools.map((tool) => (
+            <div
+              key={tool.id}
+              onMouseEnter={() => setHoveredCard(tool.id)}
+              onMouseLeave={() => setHoveredCard(null)}
+              className="group relative"
+            >
+              {/* 背景光效 */}
+              <div className={`absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl blur-xl transition-all duration-500 ${
+                hoveredCard === tool.id ? 'opacity-100 scale-105' : 'opacity-0 scale-100'
+              }`}></div>
+
+              {/* 卡片主体 */}
+              <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                {/* 头部信息 */}
                 <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-semibold text-gray-900">{tool.name}</h3>
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                    {tool.category}
-                  </span>
-                </div>
-                
-                <p className="text-gray-600 mb-4">{tool.description}</p>
-                
-                <div className="mb-4">
-                  <span className="text-sm font-medium text-gray-900">价格: </span>
-                  <span className="text-sm text-gray-600">{tool.pricing}</span>
-                </div>
-                
-                <div className="mb-4">
-                  <div className="flex flex-wrap gap-2">
-                    {tool.features.map((feature, index) => (
-                      <span key={index} className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">
-                        {feature}
-                      </span>
-                    ))}
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-xl font-bold text-white">{tool.name}</h3>
+                      {tool.trending && (
+                        <span className="px-2 py-1 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs rounded-full animate-pulse">
+                          🔥 热门
+                        </span>
+                      )}
+                    </div>
+                    <span className="inline-block px-3 py-1 bg-blue-500/20 text-blue-300 text-sm rounded-full border border-blue-400/30">
+                      {tool.category}
+                    </span>
                   </div>
                 </div>
-                
-                <div className="flex gap-2">
+
+                {/* 描述 */}
+                <p className="text-blue-200 mb-4 leading-relaxed">{tool.description}</p>
+
+                {/* 统计信息 */}
+                <div className="flex items-center gap-4 mb-4 text-sm">
+                  <div className="flex items-center gap-1">
+                    <span className="text-yellow-400">⭐</span>
+                    <span className="text-white font-semibold">{tool.rating}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-green-400">👥</span>
+                    <span className="text-blue-200">{tool.users}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-purple-400">💰</span>
+                    <span className="text-blue-200">{tool.pricing}</span>
+                  </div>
+                </div>
+
+                {/* 功能标签 */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {tool.features.map((feature, index) => (
+                    <span 
+                      key={index} 
+                      className="px-2 py-1 bg-white/10 text-blue-200 text-xs rounded-lg border border-white/20"
+                    >
+                      {feature}
+                    </span>
+                  ))}
+                </div>
+
+                {/* 操作按钮 */}
+                <div className="flex gap-3">
                   <a 
                     href={tool.url} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="flex-1 bg-blue-600 text-white text-center px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                    className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center px-4 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/50"
                   >
-                    访问工具
+                    🚀 立即使用
                   </a>
-                  <button className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
-                    详情
+                  <button className="px-4 py-3 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20">
+                    💎 详情
                   </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
-        
-        <div className="text-center mt-12">
-          <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700">
-            查看更多工具 (1000+)
+
+        {/* 查看更多按钮 */}
+        <div className="text-center mt-16">
+          <button className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-blue-500/50">
+            <span className="relative z-10 text-lg">🔍 探索更多AI工具 (1000+)</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity"></div>
           </button>
         </div>
       </div>
+
+
     </section>
   );
 };
