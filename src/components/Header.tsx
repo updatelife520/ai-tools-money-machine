@@ -21,14 +21,14 @@ const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo区域 */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg blur-lg opacity-50 animate-pulse"></div>
-              <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-2">
-                <span className="text-white text-xl">🤖</span>
+              <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-1.5 sm:p-2">
+                <span className="text-white text-lg sm:text-xl">🤖</span>
               </div>
             </div>
-            <h1 className={`text-xl font-bold transition-colors duration-300 ${
+            <h1 className={`text-lg sm:text-xl font-bold transition-colors duration-300 ${
               isScrolled ? 'text-white' : 'text-white'
             }`}>
               AI工具导航站
@@ -36,7 +36,7 @@ const Header: React.FC = () => {
           </div>
 
           {/* 导航菜单 - 桌面版 */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6 2xl:space-x-8">
             {[
               { name: 'AI工具', href: '#tools', icon: '🔧' },
               { name: '功能特性', href: '#features', icon: '⚡' },
@@ -47,25 +47,25 @@ const Header: React.FC = () => {
               <a
                 key={item.name}
                 href={item.href}
-                className={`group flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-300 ${
+                className={`group flex items-center space-x-1.5 xl:space-x-2 px-2 xl:px-3 py-2 rounded-lg transition-all duration-300 ${
                   isScrolled 
                     ? 'text-gray-300 hover:text-white hover:bg-white/10' 
                     : 'text-white/80 hover:text-white hover:bg-white/10'
                 }`}
               >
-                <span className="text-lg">{item.icon}</span>
-                <span>{item.name}</span>
+                <span className="text-sm xl:text-lg">{item.icon}</span>
+                <span className="text-sm xl:text-base hidden xl:block">{item.name}</span>
                 <div className="w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-300"></div>
               </a>
             ))}
           </nav>
 
           {/* CTA按钮组 */}
-          <div className="hidden md:flex items-center space-x-4">
-            <button className="px-4 py-2 text-white/80 hover:text-white transition-colors duration-300">
+          <div className="hidden lg:flex items-center space-x-3 xl:space-x-4">
+            <button className="px-3 py-2 xl:px-4 text-white/80 hover:text-white transition-colors duration-300 text-sm xl:text-base">
               登录
             </button>
-            <button className="group relative px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-blue-500/50">
+            <button className="group relative px-4 py-2 xl:px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-blue-500/50 text-sm xl:text-base">
               <span className="relative z-10">🔍 探索工具</span>
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-50 group-hover:opacity-75 transition-opacity"></div>
             </button>

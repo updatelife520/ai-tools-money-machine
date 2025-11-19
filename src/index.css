@@ -207,6 +207,41 @@ code {
     linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
 }
 
+/* 移动端优化 */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  .group:hover .group-hover\:scale-105 {
+    transform: none;
+  }
+  
+  .group:active .group-hover\:scale-105 {
+    transform: scale(0.98);
+  }
+}
+
+/* 移动端动画性能优化 */
+@media (max-width: 768px) {
+  .animate-pulse {
+    animation-duration: 3s;
+  }
+  
+  .animate-gradient {
+    animation-duration: 4s;
+  }
+  
+  /* 减少移动端粒子数量 */
+  .particle-container {
+    opacity: 0.3;
+  }
+}
+
 /* 加载动画 */
 .loading-dots span {
   animation: loading-dot 1.4s infinite ease-in-out both;

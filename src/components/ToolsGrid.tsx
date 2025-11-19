@@ -18,6 +18,16 @@ const ToolsGrid: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('全部');
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const categories = ['全部', '对话AI', '图像AI', '编程AI', '生产力AI', '搜索AI'];
 
@@ -156,12 +166,12 @@ const ToolsGrid: React.FC = () => {
         </div>
 
         {/* 分类筛选 */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 lg:gap-4 mb-8 sm:mb-12 px-4">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
+              className={`px-3 py-2 sm:px-4 sm:py-3 lg:px-6 lg:py-3 rounded-full font-medium text-sm sm:text-base transition-all duration-300 transform hover:scale-105 ${
                 selectedCategory === category
                   ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/50'
                   : 'bg-white/10 text-blue-200 hover:bg-white/20 backdrop-blur-sm border border-white/20'
@@ -173,12 +183,12 @@ const ToolsGrid: React.FC = () => {
         </div>
 
         {/* 工具卡片网格 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 px-4">
           {filteredTools.map((tool) => (
             <div
               key={tool.id}
-              onMouseEnter={() => setHoveredCard(tool.id)}
-              onMouseLeave={() => setHoveredCard(null)}
+              onMouseEnter={() => !isMobile && setHoveredCard(tool.id)}
+              onMouseLeave={() => !isMobile && setHoveredCard(null)}
               className="group relative"
             >
               {/* 背景光效 */}
@@ -187,66 +197,71 @@ const ToolsGrid: React.FC = () => {
               }`}></div>
 
               {/* 卡片主体 */}
-              <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+              <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:bg-white/15 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
                 {/* 头部信息 */}
-                <div className="flex justify-between items-start mb-4">
+                <div className="flex justify-between items-start mb-3 sm:mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-xl font-bold text-white">{tool.name}</h3>
+                      <h3 className="text-lg sm:text-xl font-bold text-white leading-tight">{tool.name}</h3>
                       {tool.trending && (
-                        <span className="px-2 py-1 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs rounded-full animate-pulse">
+                        <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs rounded-full animate-pulse whitespace-nowrap">
                           🔥 热门
                         </span>
                       )}
                     </div>
-                    <span className="inline-block px-3 py-1 bg-blue-500/20 text-blue-300 text-sm rounded-full border border-blue-400/30">
+                    <span className="inline-block px-2 py-1 sm:px-3 sm:py-1 bg-blue-500/20 text-blue-300 text-xs sm:text-sm rounded-full border border-blue-400/30">
                       {tool.category}
                     </span>
                   </div>
                 </div>
 
                 {/* 描述 */}
-                <p className="text-blue-200 mb-4 leading-relaxed">{tool.description}</p>
+                <p className="text-blue-200 mb-3 sm:mb-4 leading-relaxed text-sm sm:text-base line-clamp-3">{tool.description}</p>
 
                 {/* 统计信息 */}
-                <div className="flex items-center gap-4 mb-4 text-sm">
+                <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4 text-xs sm:text-sm">
                   <div className="flex items-center gap-1">
-                    <span className="text-yellow-400">⭐</span>
+                    <span className="text-yellow-400 text-xs sm:text-sm">⭐</span>
                     <span className="text-white font-semibold">{tool.rating}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className="text-green-400">👥</span>
+                    <span className="text-green-400 text-xs sm:text-sm">👥</span>
                     <span className="text-blue-200">{tool.users}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className="text-purple-400">💰</span>
+                    <span className="text-purple-400 text-xs sm:text-sm">💰</span>
                     <span className="text-blue-200">{tool.pricing}</span>
                   </div>
                 </div>
 
                 {/* 功能标签 */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {tool.features.map((feature, index) => (
+                <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-6">
+                  {tool.features.slice(0, isMobile ? 3 : 4).map((feature, index) => (
                     <span 
                       key={index} 
-                      className="px-2 py-1 bg-white/10 text-blue-200 text-xs rounded-lg border border-white/20"
+                      className="px-1.5 py-1 sm:px-2 sm:py-1 bg-white/10 text-blue-200 text-xs rounded-lg border border-white/20"
                     >
                       {feature}
                     </span>
                   ))}
+                  {isMobile && tool.features.length > 3 && (
+                    <span className="px-1.5 py-1 bg-white/10 text-blue-200 text-xs rounded-lg border border-white/20">
+                      +{tool.features.length - 3}
+                    </span>
+                  )}
                 </div>
 
                 {/* 操作按钮 */}
-                <div className="flex gap-3">
+                <div className="flex gap-2 sm:gap-3">
                   <a 
                     href={tool.url} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center px-4 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/50"
+                    className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center px-3 py-2 sm:px-4 sm:py-3 rounded-lg sm:rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/50 text-sm sm:text-base"
                   >
                     🚀 立即使用
                   </a>
-                  <button className="px-4 py-3 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20">
+                  <button className="px-3 py-2 sm:px-4 sm:py-3 bg-white/10 text-white rounded-lg sm:rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20 text-sm sm:text-base">
                     💎 详情
                   </button>
                 </div>
