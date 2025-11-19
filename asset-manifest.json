@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/ai-tools-money-machine/static/css/main.de68076c.css",
-    "main.js": "/ai-tools-money-machine/static/js/main.cae2f806.js",
+    "main.css": "/ai-tools-money-machine/static/css/main.67921fa1.css",
+    "main.js": "/ai-tools-money-machine/static/js/main.c5957c0a.js",
     "index.html": "/ai-tools-money-machine/index.html",
-    "main.de68076c.css.map": "/ai-tools-money-machine/static/css/main.de68076c.css.map",
-    "main.cae2f806.js.map": "/ai-tools-money-machine/static/js/main.cae2f806.js.map"
+    "main.67921fa1.css.map": "/ai-tools-money-machine/static/css/main.67921fa1.css.map",
+    "main.c5957c0a.js.map": "/ai-tools-money-machine/static/js/main.c5957c0a.js.map"
   },
   "entrypoints": [
-    "static/css/main.de68076c.css",
-    "static/js/main.cae2f806.js"
+    "static/css/main.67921fa1.css",
+    "static/js/main.c5957c0a.js"
   ]
 }
