@@ -1,0 +1,151 @@
+name: 🚀 自动部署到生产环境
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # 每天UTC 00:00自动部署
+    - cron: '0 0 * * *'
+
+jobs:
+  # 前端部署到GitHub Pages
+  frontend:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 检出代码
+      uses: actions/checkout@v4
+      
+    - name: 📦 安装Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: 📥 安装依赖
+      run: npm ci
+      
+    - name: 🔨 构建项目
+      run: npm run build
+      env:
+        REACT_APP_API_URL: ${{ secrets.API_URL }}
+        
+    - name: 📤 部署到GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build
+        cname: ai-tools-money-machine.com
+
+  # 后端API部署到Vercel
+  backend:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 检出代码
+      uses: actions/checkout@v4
+      
+    - name: 📦 安装Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: 📥 安装服务端依赖
+      run: |
+        cd server
+        npm ci
+        
+    - name: 🚀 部署到Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.ORG_ID }}
+        vercel-project-id: ${{ secrets.PROJECT_ID }}
+        vercel-args: '--prod'
+        working-directory: ./server
+        scope: ${{ secrets.VERCEL_SCOPE }}
+
+  # Docker部署（可选）
+  docker:
+    runs-on: ubuntu-latest
+    needs: [frontend, backend]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 检出代码
+      uses: actions/checkout@v4
+      
+    - name: 🐳 设置Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: 🔐 登录Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        
+    - name: 🏗️ 构建并推送前端镜像
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./deploy/Dockerfile
+        push: true
+        tags: |
+          ${{ secrets.DOCKER_USERNAME }}/ai-tools-frontend:latest
+          ${{ secrets.DOCKER_USERNAME }}/ai-tools-frontend:${{ github.sha }}
+          
+    - name: 🏗️ 构建并推送API镜像
+      uses: docker/build-push-action@v5
+      with:
+        context: ./server
+        file: ./server/Dockerfile
+        push: true
+        tags: |
+          ${{ secrets.DOCKER_USERNAME }}/ai-tools-api:latest
+          ${{ secrets.DOCKER_USERNAME }}/ai-tools-api:${{ github.sha }}
+
+  # 数据库备份
+  backup:
+    runs-on: ubuntu-latest
+    needs: backend
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 检出代码
+      uses: actions/checkout@v4
+      
+    - name: 💾 备份数据
+      env:
+        API_URL: ${{ secrets.API_URL }}
+      run: |
+        curl -X POST "${API_URL}/api/backup" \
+          -H "Authorization: Bearer ${{ secrets.BACKUP_TOKEN }}" \
+          -H "Content-Type: application/json"
+
+  # 健康检查
+  health-check:
+    runs-on: ubuntu-latest
+    needs: [frontend, backend]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 🔍 检查前端状态
+      run: |
+        sleep 60 # 等待部署完成
+        curl -f ${{ secrets.FRONTEND_URL }} || exit 1
+        
+    - name: 🔍 检查API状态
+      run: |
+        curl -f ${{ secrets.API_URL }}/health || exit 1
+        
+    - name: 📊 发送状态通知
+      if: failure()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        channel: '#deployments'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}

@@ -1,39 +1,33 @@
 {
   "name": "ai-tools-money-machine",
   "version": "1.0.0",
-  "description": "AI工具赚钱机器 - 全自动被动收入项目",
-  "main": "index.js",
+  "description": "🤖 AI工具赚钱机器 - 全自动导航站",
+  "homepage": "https://updatelife520.github.io/ai-tools-money-machine",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4",
+    "axios": "^1.6.0",
+    "lucide-react": "^0.294.0"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "react-scripts start",
-    "deploy": "npm run build && gh-pages -d build"
+    "deploy": "npm run build && gh-pages -d build",
+    "predeploy": "npm run build"
   },
-  "keywords": [
-    "ai-tools",
-    "automation",
-    "passive-income",
-    "money-machine"
-  ],
-  "author": "Your Name",
-  "license": "MIT",
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.8.0",
-    "react-scripts": "5.0.1",
-    "axios": "^1.3.4",
-    "tailwindcss": "^3.2.7",
-    "autoprefixer": "^10.4.14",
-    "postcss": "^8.4.21"
-  },
-  "devDependencies": {
-    "gh-pages": "^5.0.0",
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
-    "typescript": "^4.9.5"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [
@@ -47,5 +41,17 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "https://yourusername.github.io/ai-tools-money-machine"
+  "devDependencies": {
+    "gh-pages": "^6.1.0"
+  },
+  "keywords": [
+    "ai-tools",
+    "automation",
+    "affiliate-marketing",
+    "revenue-automation",
+    "react",
+    "javascript"
+  ],
+  "author": "AI Tools Money Machine",
+  "license": "MIT"
 }

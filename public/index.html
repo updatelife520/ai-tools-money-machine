@@ -1,18 +1,746 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="AI工具赚钱机器 - 全自动被动收入项目"
-    />
-    <title>AI工具赚钱机器</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI工具导航站 - 精选优质AI工具，提升工作效率</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif; 
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%),
+                linear-gradient(135deg, #0c0c1d 0%, #1a1a3d 50%, #2d2d5d 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(74, 144, 226, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(226, 74, 144, 0.15) 0%, transparent 50%);
+            animation: backgroundPulse 15s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 0.6; transform: scale(1) rotate(0deg); }
+            50% { opacity: 0.8; transform: scale(1.05) rotate(1deg); }
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #48dbfb, #a29bfe, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #48dbfb, #a29bfe);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        /* 主要内容区域 */
+        .hero-section {
+            text-align: center;
+            padding: 60px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero-title {
+            font-size: 48px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #48dbfb, #a29bfe, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 18px;
+            color: #e0e0e0;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #48dbfb;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #48dbfb, #a29bfe);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(72, 219, 251, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #48dbfb;
+            padding: 15px 30px;
+            border: 2px solid #48dbfb;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-secondary:hover {
+            background: #48dbfb;
+            color: white;
+        }
+        
+        /* 问题解决区域 */
+        .problem-solver {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            background: linear-gradient(45deg, #48dbfb, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .problem-categories {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .category-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .category-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+        }
+        
+        .category-item.active {
+            background: linear-gradient(45deg, rgba(72, 219, 251, 0.3), rgba(162, 155, 254, 0.3));
+            border-color: #48dbfb;
+        }
+        
+        .category-icon {
+            font-size: 24px;
+            width: 40px;
+            text-align: center;
+        }
+        
+        .category-text h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .category-text p {
+            font-size: 12px;
+            color: #ccc;
+        }
+        
+        .solution-display {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 300px;
+        }
+        
+        .solution-placeholder {
+            text-align: center;
+            color: #888;
+            padding: 60px 20px;
+        }
+        
+        .solution-content {
+            display: none;
+        }
+        
+        .solution-content.active {
+            display: block;
+        }
+        
+        .solution-tools {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .tool-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+        }
+        
+        .tool-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #48dbfb;
+        }
+        
+        .tool-description {
+            font-size: 14px;
+            color: #ccc;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .tool-link {
+            background: linear-gradient(45deg, #48dbfb, #a29bfe);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .tool-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 219, 251, 0.4);
+        }
+        
+        /* 统计信息 */
+        .stats-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px auto;
+            max-width: 1200px;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .stat-card {
+            text-align: center;
+        }
+        
+        .stat-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #48dbfb;
+            margin-bottom: 8px;
+        }
+        
+        .stat-desc {
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 15px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero-title {
+                font-size: 32px;
+            }
+            
+            .hero-stats {
+                gap: 30px;
+            }
+            
+            .problem-categories {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo">AI工具导航站</div>
+        <div class="nav-links">
+            <a href="#home" class="nav-link">首页</a>
+            <a href="#tools" class="nav-link">工具</a>
+            <a href="#categories" class="nav-link">分类</a>
+            <a href="#about" class="nav-link">关于</a>
+            <a href="admin.html" class="nav-link">管理后台</a>
+        </div>
+    </nav>
+    
+    <!-- 主要内容区域 -->
+    <section class="hero-section" id="home">
+        <h1 class="hero-title">AI工具导航站</h1>
+        <p class="hero-subtitle">精选优质AI工具，提升工作效率</p>
+        
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-number">1000+</div>
+                <div class="stat-label">精选AI工具</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">应用场景</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">1M+</div>
+                <div class="stat-label">用户信赖</div>
+            </div>
+        </div>
+        
+        <div class="cta-buttons">
+            <a href="#tools" class="btn-primary">🔍 免费探索工具</a>
+            <a href="#guide" class="btn-secondary">📖 使用指南</a>
+        </div>
+    </section>
+    
+    <!-- 问题解决区域 -->
+    <section class="problem-solver" id="tools">
+        <h2 class="section-title">🎵 遇到问题？AI来解决</h2>
+        <p style="text-align: center; color: #ccc; margin-bottom: 40px;">选择您遇到的问题，我们将为您推荐最适合的AI工具解决方案</p>
+        
+        <div class="problem-categories">
+            <div class="category-list">
+                <div class="category-item" onclick="showSolution('content')">
+                    <div class="category-icon">✍️</div>
+                    <div class="category-text">
+                        <h3>内容创作</h3>
+                        <p>需要快速生成高质量文章、视频脚本、社交媒体内容</p>
+                    </div>
+                </div>
+                
+                <div class="category-item" onclick="showSolution('design')">
+                    <div class="category-icon">🎨</div>
+                    <div class="category-text">
+                        <h3>设计制作</h3>
+                        <p>需要快速制作图片、海报、UI设计、logo等视觉内容</p>
+                    </div>
+                </div>
+                
+                <div class="category-item" onclick="showSolution('coding')">
+                    <div class="category-icon">💻</div>
+                    <div class="category-text">
+                        <h3>编程开发</h3>
+                        <p>需要代码辅助、调试、文档生成、项目开发</p>
+                    </div>
+                </div>
+                
+                <div class="category-item" onclick="showSolution('marketing')">
+                    <div class="category-icon">📈</div>
+                    <div class="category-text">
+                        <h3>营销推广</h3>
+                        <p>需要市场分析、用户画像、营销策略、广告优化</p>
+                    </div>
+                </div>
+                
+                <div class="category-item" onclick="showSolution('data')">
+                    <div class="category-icon">📊</div>
+                    <div class="category-text">
+                        <h3>数据分析</h3>
+                        <p>需要数据处理、图表制作、报告生成、趋势分析</p>
+                    </div>
+                </div>
+                
+                <div class="category-item" onclick="showSolution('productivity')">
+                    <div class="category-icon">⚡</div>
+                    <div class="category-text">
+                        <h3>效率提升</h3>
+                        <p>需要时间管理、任务规划、文档整理、会议记录</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="solution-display">
+                <div class="solution-placeholder" id="placeholder">
+                    <h3>🤔 请选择左侧的问题类型</h3>
+                    <p>我们将为您推荐最适合的AI工具</p>
+                </div>
+                
+                <div class="solution-content" id="content-solution">
+                    <h3>✍️ 内容创作解决方案</h3>
+                    <p>以下AI工具可以帮助您快速生成高质量内容</p>
+                    <div class="solution-tools">
+                        <div class="tool-card">
+                            <div class="tool-name">ChatGPT</div>
+                            <div class="tool-description">强大的对话AI，帮助生成文章、创意文案、脚本等</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('chatgpt')">立即使用</a>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Claude</div>
+                            <div class="tool-description">专业写作助手，擅长长文创作和深度分析</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('claude')">立即使用</a>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Jasper</div>
+                            <div class="tool-description">营销文案专家，专注商业内容创作</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('jasper')">立即使用</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="solution-content" id="design-solution">
+                    <h3>🎨 设计制作解决方案</h3>
+                    <p>以下AI工具可以帮助您快速创建专业设计</p>
+                    <div class="solution-tools">
+                        <div class="tool-card">
+                            <div class="tool-name">Midjourney</div>
+                            <div class="tool-description">顶尖AI绘画工具，生成高质量艺术作品</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('midjourney')">立即使用</a>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Canva AI</div>
+                            <div class="tool-description">智能设计平台，快速制作海报、社交媒体图片</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('canva')">立即使用</a>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Figma AI</div>
+                            <div class="tool-description">UI/UX设计助手，自动化设计流程</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('figma')">立即使用</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="solution-content" id="coding-solution">
+                    <h3>💻 编程开发解决方案</h3>
+                    <p>以下AI工具可以提升您的开发效率</p>
+                    <div class="solution-tools">
+                        <div class="tool-card">
+                            <div class="tool-name">GitHub Copilot</div>
+                            <div class="tool-description">AI编程助手，实时代码补全和建议</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('copilot')">立即使用</a>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Cursor</div>
+                            <div class="tool-description">AI驱动的代码编辑器，智能编程体验</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('cursor')">立即使用</a>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Replit Ghostwriter</div>
+                            <div class="tool-description">在线编程环境，AI辅助代码生成</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('replit')">立即使用</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="solution-content" id="marketing-solution">
+                    <h3>📈 营销推广解决方案</h3>
+                    <p>以下AI工具可以帮助您优化营销策略</p>
+                    <div class="solution-tools">
+                        <div class="tool-card">
+                            <div class="tool-name">HubSpot AI</div>
+                            <div class="tool-description">智能营销平台，自动化客户管理</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('hubspot')">立即使用</a>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Google Analytics AI</div>
+                            <div class="tool-description">智能数据分析，洞察用户行为</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('analytics')">立即使用</a>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">AdCreative.ai</div>
+                            <div class="tool-description">AI广告创意生成，提升转化率</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('adcreative')">立即使用</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="solution-content" id="data-solution">
+                    <h3>📊 数据分析解决方案</h3>
+                    <p>以下AI工具可以帮助您处理和分析数据</p>
+                    <div class="solution-tools">
+                        <div class="tool-card">
+                            <div class="tool-name">Tableau AI</div>
+                            <div class="tool-description">智能数据可视化，自动生成洞察报告</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('tableau')">立即使用</a>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Polymer</div>
+                            <div class="tool-description">无需编程的数据分析平台</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('polymer')">立即使用</a>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Julius AI</div>
+                            <div class="tool-description">自然语言数据分析助手</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('julius')">立即使用</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="solution-content" id="productivity-solution">
+                    <h3>⚡ 效率提升解决方案</h3>
+                    <p>以下AI工具可以帮助您提升工作效率</p>
+                    <div class="solution-tools">
+                        <div class="tool-card">
+                            <div class="tool-name">Notion AI</div>
+                            <div class="tool-description">智能工作空间，自动化任务管理</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('notion')">立即使用</a>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Motion</div>
+                            <div class="tool-description">AI日历助手，智能时间规划</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('motion')">立即使用</a>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">Otter.ai</div>
+                            <div class="tool-description">AI会议记录，实时转录和总结</div>
+                            <a href="#" class="tool-link" onclick="trackToolClick('otter')">立即使用</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 统计信息 -->
+    <section class="stats-section">
+        <h2 class="section-title">🎯 为什么选择我们</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value">智能推荐</div>
+                <div class="stat-desc">根据需求推荐最适合的AI工具</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value">效率提升</div>
+                <div class="stat-desc">平均节省70%工作时间</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🤝</div>
+                <div class="stat-value">免费使用</div>
+                <div class="stat-desc">大部分工具提供免费版本</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🚀</div>
+                <div class="stat-value">快速上手</div>
+                <div class="stat-desc">详细教程，5分钟掌握</div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px; padding: 20px; background: rgba(72, 219, 251, 0.1); border-radius: 15px;">
+            <h3 style="color: #48dbfb; margin-bottom: 15px;">💡 平台数据</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; text-align: center;">
+                <div>
+                    <div style="font-size: 24px; font-weight: bold; color: #48dbfb;">95%</div>
+                    <div style="font-size: 12px; color: #ccc;">用户问题解决率</div>
+                </div>
+                <div>
+                    <div style="font-size: 24px; font-weight: bold; color: #48dbfb;">10分钟</div>
+                    <div style="font-size: 12px; color: #ccc;">平均问题解决时间</div>
+                </div>
+                <div>
+                    <div style="font-size: 24px; font-weight: bold; color: #48dbfb;">1000+</div>
+                    <div style="font-size: 12px; color: #ccc;">AI工具解决方案</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // 显示解决方案
+        function showSolution(category) {
+            // 移除所有active类
+            document.querySelectorAll('.category-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.solution-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 隐藏占位符
+            document.getElementById('placeholder').style.display = 'none';
+            
+            // 添加active类到当前项
+            event.currentTarget.classList.add('active');
+            document.getElementById(category + '-solution').classList.add('active');
+        }
+        
+        // 工具点击跟踪
+        function trackToolClick(toolName) {
+            // 这里可以添加统计代码
+            console.log('用户点击了工具:', toolName);
+            
+            // 模拟跳转到工具页面
+            alert(`即将跳转到 ${toolName} 的官方页面`);
+            
+            // 实际项目中应该跳转到真实的工具链接
+            // window.open('https://tool-website.com', '_blank');
+        }
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.8s ease';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+            
+            console.log('🎯 AI工具导航站已加载完成');
+        });
+    </script>
+</body>
 </html>

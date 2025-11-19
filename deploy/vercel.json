@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "name": "ai-tools-money-machine-api",
+  "builds": [
+    {
+      "src": "server/api/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "server/api/index.js"
+    },
+    {
+      "src": "/health",
+      "dest": "server/api/index.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "server/api/index.js": {
+      "maxDuration": 30
+    }
+  },
+  "installCommand": "cd server && npm install",
+  "buildCommand": "echo 'No build required'"
+}
