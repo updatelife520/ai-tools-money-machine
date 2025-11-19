@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/ai-tools-money-machine/static/css/main.a6f0d414.css",
+    "main.js": "/ai-tools-money-machine/static/js/main.b5aa0198.js",
+    "index.html": "/ai-tools-money-machine/index.html",
+    "main.a6f0d414.css.map": "/ai-tools-money-machine/static/css/main.a6f0d414.css.map",
+    "main.b5aa0198.js.map": "/ai-tools-money-machine/static/js/main.b5aa0198.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a6f0d414.css",
+    "static/js/main.b5aa0198.js"
+  ]
+}
