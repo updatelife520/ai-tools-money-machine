@@ -3,742 +3,989 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI生活好物 - 管理后台</title>
+    <title>管理后台 - AI工具导航站</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif; 
+            background: linear-gradient(135deg, #0c0c1d 0%, #1a1a3d 50%, #2d2d5d 100%);
+            min-height: 100vh;
+            color: #fff;
         }
         
-        body {
-            background: linear-gradient(135deg, #1a1a3d 0%, #2d2d5d 100%);
+        /* 侧边栏 */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-title {
+            font-size: 20px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #48dbfb, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-menu {
+            padding: 20px 0;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
             color: #fff;
+        }
+        
+        .nav-item.active {
+            background: rgba(72, 219, 251, 0.2);
+            color: #48dbfb;
+            border-left: 3px solid #48dbfb;
+        }
+        
+        .nav-icon {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
             min-height: 100vh;
         }
         
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
         }
         
-        header {
+        .page-title {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #48dbfb, #a29bfe);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .stat-title {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .stat-icon {
+            font-size: 24px;
+            opacity: 0.6;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .stat-change {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .stat-change.positive {
+            color: #48dbfb;
+        }
+        
+        .stat-change.negative {
+            color: #ff6b6b;
+        }
+        
+        /* 数据表格 */
+        .data-table {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
             margin-bottom: 30px;
+        }
+        
+        .table-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        h1 {
-            font-size: 28px;
-            background: linear-gradient(45deg, #48dbfb, #a29bfe);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .table-title {
+            font-size: 18px;
+            font-weight: bold;
         }
         
-        .status-indicator {
+        .table-filters {
             display: flex;
-            align-items: center;
             gap: 10px;
         }
         
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #2ecc71;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-        
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .card {
+        .filter-select {
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            outline: none;
         }
         
-        .card-title {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #48dbfb;
-        }
-        
-        .stat-value {
-            font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 14px;
-            color: #ccc;
-        }
-        
-        .chart-container {
-            height: 200px;
-            margin-top: 15px;
-        }
-        
-        .product-table {
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
         
-        .product-table th, .product-table td {
-            padding: 12px;
+        th {
             text-align: left;
+            padding: 15px 25px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
         }
         
-        .product-table th {
+        td {
+            padding: 15px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        tr:hover {
             background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .tool-name {
+            font-weight: 600;
+        }
+        
+        .tool-type {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .tool-type.free {
+            background: rgba(72, 219, 251, 0.2);
             color: #48dbfb;
         }
         
-        .product-table tr:hover {
-            background: rgba(255, 255, 255, 0.05);
+        .tool-type.freemium {
+            background: rgba(162, 155, 254, 0.2);
+            color: #a29bfe;
+        }
+        
+        .tool-type.paid {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+        
+        .commission-rate {
+            font-weight: 600;
+            color: #48dbfb;
         }
         
         .status-badge {
+            display: inline-block;
             padding: 4px 8px;
-            border-radius: 4px;
+            border-radius: 12px;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 500;
         }
         
-        .status-normal {
-            background: rgba(46, 204, 113, 0.2);
-            color: #2ecc71;
+        .status-badge.active {
+            background: rgba(72, 219, 251, 0.2);
+            color: #48dbfb;
         }
         
-        .status-warning {
-            background: rgba(241, 196, 15, 0.2);
-            color: #f1c40f;
+        .status-badge.inactive {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
         }
         
-        .status-danger {
-            background: rgba(231, 76, 60, 0.2);
-            color: #e74c3c;
+        .table-actions {
+            display: flex;
+            gap: 8px;
         }
         
-        .btn {
-            background: linear-gradient(45deg, #48dbfb, #a29bfe);
-            color: white;
+        .action-btn {
+            padding: 6px 10px;
             border: none;
-            padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
-            font-weight: bold;
+            font-size: 12px;
             transition: all 0.3s ease;
         }
         
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(72, 219, 251, 0.4);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(45deg, #e74c3c, #c0392b);
-        }
-        
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .tab {
-            padding: 15px 20px;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
-        
-        .tab.active {
-            border-bottom-color: #48dbfb;
+        .action-btn.edit {
+            background: rgba(72, 219, 251, 0.2);
             color: #48dbfb;
         }
         
-        .tab-content {
+        .action-btn.delete {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+        
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+        
+        /* 页面内容 */
+        .page-content {
             display: none;
         }
         
-        .tab-content.active {
+        .page-content.active {
             display: block;
         }
         
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(46, 204, 113, 0.9);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            transform: translateX(120%);
-            transition: transform 0.3s ease;
-            z-index: 1000;
-        }
-        
-        .notification.show {
-            transform: translateX(0);
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-content {
-            background: linear-gradient(135deg, #2d2d5d 0%, #1a1a3d 100%);
-            border-radius: 15px;
-            padding: 30px;
-            width: 90%;
-            max-width: 500px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #48dbfb;
-        }
-        
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 10px;
+        /* 图表容器 */
+        .chart-container {
             background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 6px;
-            color: white;
-        }
-        
-        .form-actions {
+            margin-bottom: 30px;
+            height: 400px;
             display: flex;
-            justify-content: flex-end;
-            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
         }
         
+        /* 响应式设计 */
         @media (max-width: 768px) {
-            .dashboard {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .stats-grid {
                 grid-template-columns: 1fr;
-            }
-            
-            .product-table {
-                font-size: 14px;
-            }
-            
-            .product-table th, .product-table td {
-                padding: 8px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>AI生活好物 - 管理后台</h1>
-            <div class="status-indicator">
-                <div class="status-dot"></div>
-                <span>系统运行正常</span>
-            </div>
-        </header>
-        
-        <div class="dashboard">
-            <div class="card">
-                <div class="card-title">总产品数</div>
-                <div class="stat-value" id="totalProducts">0</div>
-                <div class="stat-label">个产品</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">今日点击量</div>
-                <div class="stat-value" id="todayClicks">0</div>
-                <div class="stat-label">次点击</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">预估佣金</div>
-                <div class="stat-value" id="estimatedCommission">¥0</div>
-                <div class="stat-label">本月预估</div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">异常产品</div>
-                <div class="stat-value" id="abnormalProducts">0</div>
-                <div class="stat-label">需要处理</div>
-            </div>
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">🤖 管理后台</h2>
         </div>
-        
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('products')">产品管理</div>
-            <div class="tab" onclick="switchTab('analytics')">数据分析</div>
-            <div class="tab" onclick="switchTab('settings')">系统设置</div>
-        </div>
-        
-        <div id="products" class="tab-content active">
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2 class="card-title">产品列表</h2>
-                    <button class="btn" onclick="updateProducts()">更新产品</button>
+        <nav class="nav-menu">
+            <a class="nav-item active" onclick="showPage('dashboard')">
+                <span class="nav-icon">📊</span>
+                <span>数据概览</span>
+            </a>
+            <a class="nav-item" onclick="showPage('tools')">
+                <span class="nav-icon">🔧</span>
+                <span>工具管理</span>
+            </a>
+            <a class="nav-item" onclick="showPage('commission')">
+                <span class="nav-icon">💰</span>
+                <span>收益统计</span>
+            </a>
+            <a class="nav-item" onclick="showPage('analytics')">
+                <span class="nav-icon">📈</span>
+                <span>用户分析</span>
+            </a>
+            <a class="nav-item" onclick="showPage('automation')">
+                <span class="nav-icon">🤖</span>
+                <span>自动化设置</span>
+            </a>
+            <a class="nav-item" onclick="showPage('settings')">
+                <span class="nav-icon">⚙️</span>
+                <span>系统设置</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <!-- 数据概览页面 -->
+        <div id="dashboard" class="page-content active">
+            <div class="header">
+                <h1 class="page-title">数据概览</h1>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="refreshData()">
+                        <span>🔄</span>
+                        <span>刷新数据</span>
+                    </button>
+                    <button class="btn btn-primary" onclick="exportData()">
+                        <span>📊</span>
+                        <span>导出报表</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">总收益</span>
+                        <span class="stat-icon">💰</span>
+                    </div>
+                    <div class="stat-value" id="totalRevenue">$494.34</div>
+                    <div class="stat-change positive">
+                        <span>↑</span>
+                        <span>12.5% 较上月</span>
+                    </div>
                 </div>
                 
-                <table class="product-table">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">本月收益</span>
+                        <span class="stat-icon">📈</span>
+                    </div>
+                    <div class="stat-value" id="monthlyRevenue">$87.23</div>
+                    <div class="stat-change positive">
+                        <span>↑</span>
+                        <span>8.3% 较上月</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">转化率</span>
+                        <span class="stat-icon">🎯</span>
+                    </div>
+                    <div class="stat-value" id="conversionRate">0.46%</div>
+                    <div class="stat-change negative">
+                        <span>↓</span>
+                        <span>2.1% 较上月</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">总点击量</span>
+                        <span class="stat-icon">👆</span>
+                    </div>
+                    <div class="stat-value" id="totalClicks">15,847</div>
+                    <div class="stat-change positive">
+                        <span>↑</span>
+                        <span>23.7% 较上月</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <p>📊 收益趋势图表 (需要集成Chart.js或类似库)</p>
+            </div>
+
+            <div class="data-table">
+                <div class="table-header">
+                    <h3 class="table-title">热门工具排行</h3>
+                    <div class="table-filters">
+                        <select class="filter-select" onchange="filterTopTools(this.value)">
+                            <option value="today">今日</option>
+                            <option value="week">本周</option>
+                            <option value="month">本月</option>
+                            <option value="all">全部</option>
+                        </select>
+                    </div>
+                </div>
+                <table>
                     <thead>
                         <tr>
-                            <th>产品名称</th>
+                            <th>排名</th>
+                            <th>工具名称</th>
                             <th>类别</th>
-                            <th>价格</th>
-                            <th>佣金率</th>
-                            <th>销量</th>
-                            <th>状态</th>
-                            <th>操作</th>
+                            <th>点击量</th>
+                            <th>转化率</th>
+                            <th>收益</th>
                         </tr>
                     </thead>
-                    <tbody id="productTableBody">
-                        <!-- 产品数据将通过JavaScript动态加载 -->
+                    <tbody id="topToolsTable">
+                        <tr>
+                            <td>1</td>
+                            <td class="tool-name">ChatGPT</td>
+                            <td>内容创作</td>
+                            <td>3,247</td>
+                            <td>0.8%</td>
+                            <td class="commission-rate">$234.56</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td class="tool-name">Midjourney</td>
+                            <td>设计制作</td>
+                            <td>2,156</td>
+                            <td>0.6%</td>
+                            <td class="commission-rate">$189.23</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td class="tool-name">GitHub Copilot</td>
+                            <td>编程开发</td>
+                            <td>1,892</td>
+                            <td>0.4%</td>
+                            <td class="commission-rate">$156.78</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-        
-        <div id="analytics" class="tab-content">
-            <div class="card">
-                <h2 class="card-title">销售数据分析</h2>
-                <div class="chart-container">
-                    <canvas id="salesChart"></canvas>
+
+        <!-- 工具管理页面 -->
+        <div id="tools" class="page-content">
+            <div class="header">
+                <h1 class="page-title">工具管理</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="addNewTool()">
+                        <span>➕</span>
+                        <span>添加工具</span>
+                    </button>
                 </div>
             </div>
-            
-            <div class="card" style="margin-top: 20px;">
-                <h2 class="card-title">类别分布</h2>
-                <div class="chart-container">
-                    <canvas id="categoryChart"></canvas>
-                </div>
-            </div>
-        </div>
-        
-        <div id="settings" class="tab-content">
-            <div class="card">
-                <h2 class="card-title">系统设置</h2>
-                <form id="settingsForm">
-                    <div class="form-group">
-                        <label>自动更新</label>
-                        <select id="autoUpdate">
-                            <option value="true">启用</option>
-                            <option value="false">禁用</option>
+
+            <div class="data-table">
+                <div class="table-header">
+                    <h3 class="table-title">工具列表</h3>
+                    <div class="table-filters">
+                        <select class="filter-select" onchange="filterTools(this.value)">
+                            <option value="all">全部工具</option>
+                            <option value="free">免费工具</option>
+                            <option value="freemium">免费试用</option>
+                            <option value="paid">付费工具</option>
                         </select>
                     </div>
-                    
-                    <div class="form-group">
-                        <label>更新时间 (Cron表达式)</label>
-                        <input type="text" id="updateSchedule" value="0 2 * * *">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>每类最大产品数</label>
-                        <input type="number" id="maxProductsPerCategory" value="20">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>最低佣金率 (%)</label>
-                        <input type="number" id="minCommissionRate" value="10">
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="button" class="btn" onclick="saveSettings()">保存设置</button>
-                    </div>
-                </form>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>工具名称</th>
+                            <th>类别</th>
+                            <th>类型</th>
+                            <th>佣金比例</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="toolsTable">
+                        <tr>
+                            <td class="tool-name">ChatGPT</td>
+                            <td>内容创作</td>
+                            <td><span class="tool-type freemium">免费试用</span></td>
+                            <td class="commission-rate">10%</td>
+                            <td><span class="status-badge active">启用</span></td>
+                            <td class="table-actions">
+                                <button class="action-btn edit" onclick="editTool('chatgpt')">编辑</button>
+                                <button class="action-btn delete" onclick="deleteTool('chatgpt')">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name">Midjourney</td>
+                            <td>设计制作</td>
+                            <td><span class="tool-type paid">付费</span></td>
+                            <td class="commission-rate">15%</td>
+                            <td><span class="status-badge active">启用</span></td>
+                            <td class="table-actions">
+                                <button class="action-btn edit" onclick="editTool('midjourney')">编辑</button>
+                                <button class="action-btn delete" onclick="deleteTool('midjourney')">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tool-name">Canva</td>
+                            <td>设计制作</td>
+                            <td><span class="tool-type free">免费</span></td>
+                            <td class="commission-rate">-</td>
+                            <td><span class="status-badge active">启用</span></td>
+                            <td class="table-actions">
+                                <button class="action-btn edit" onclick="editTool('canva')">编辑</button>
+                                <button class="action-btn delete" onclick="deleteTool('canva')">删除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-    </div>
-    
-    <div id="notification" class="notification"></div>
-    
-    <div id="productModal" class="modal">
-        <div class="modal-content">
-            <h2 class="card-title">产品详情</h2>
-            <div id="productDetails"></div>
-            <div class="form-actions">
-                <button class="btn" onclick="closeModal()">关闭</button>
-                <button class="btn btn-danger" onclick="blacklistProduct()">加入黑名单</button>
+
+        <!-- 收益统计页面 -->
+        <div id="commission" class="page-content">
+            <div class="header">
+                <h1 class="page-title">收益统计</h1>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="refreshCommissionData()">
+                        <span>🔄</span>
+                        <span>刷新数据</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">今日收益</span>
+                        <span class="stat-icon">💵</span>
+                    </div>
+                    <div class="stat-value">$12.45</div>
+                    <div class="stat-change positive">
+                        <span>↑</span>
+                        <span>5.2% 较昨日</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">本周收益</span>
+                        <span class="stat-icon">📊</span>
+                    </div>
+                    <div class="stat-value">$87.23</div>
+                    <div class="stat-change positive">
+                        <span>↑</span>
+                        <span>12.8% 较上周</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">本月收益</span>
+                        <span class="stat-icon">📈</span>
+                    </div>
+                    <div class="stat-value">$494.34</div>
+                    <div class="stat-change positive">
+                        <span>↑</span>
+                        <span>18.3% 较上月</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">平均佣金</span>
+                        <span class="stat-icon">💰</span>
+                    </div>
+                    <div class="stat-value">$15.67</div>
+                    <div class="stat-change negative">
+                        <span>↓</span>
+                        <span>2.1% 较上月</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <p>📊 收益分析图表 (需要集成Chart.js或类似库)</p>
             </div>
         </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <!-- 用户分析页面 -->
+        <div id="analytics" class="page-content">
+            <div class="header">
+                <h1 class="page-title">用户分析</h1>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">今日访问</span>
+                        <span class="stat-icon">👥</span>
+                    </div>
+                    <div class="stat-value">1,247</div>
+                    <div class="stat-change positive">
+                        <span>↑</span>
+                        <span>8.5% 较昨日</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">新用户</span>
+                        <span class="stat-icon">🆕</span>
+                    </div>
+                    <div class="stat-value">342</div>
+                    <div class="stat-change positive">
+                        <span>↑</span>
+                        <span>15.2% 较昨日</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">跳出率</span>
+                        <span class="stat-icon">🚪</span>
+                    </div>
+                    <div class="stat-value">32.4%</div>
+                    <div class="stat-change negative">
+                        <span>↑</span>
+                        <span>3.2% 较昨日</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">平均停留时间</span>
+                        <span class="stat-icon">⏱️</span>
+                    </div>
+                    <div class="stat-value">4m 32s</div>
+                    <div class="stat-change positive">
+                        <span>↑</span>
+                        <span>12.7% 较昨日</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <p>📊 用户行为分析图表</p>
+            </div>
+        </div>
+
+        <!-- 自动化设置页面 -->
+        <div id="automation" class="page-content">
+            <div class="header">
+                <h1 class="page-title">自动化设置</h1>
+            </div>
+
+            <div class="data-table">
+                <div class="table-header">
+                    <h3 class="table-title">自动化规则</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>规则名称</th>
+                            <th>触发条件</th>
+                            <th>执行动作</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>智能链接优化</td>
+                            <td>转化率低于0.3%</td>
+                            <td>自动切换高佣金链接</td>
+                            <td><span class="status-badge active">启用</span></td>
+                            <td class="table-actions">
+                                <button class="action-btn edit" onclick="editAutomation('link-optimization')">编辑</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>工具推荐更新</td>
+                            <td>每日凌晨2点</td>
+                            <td>更新热门工具排行</td>
+                            <td><span class="status-badge active">启用</span></td>
+                            <td class="table-actions">
+                                <button class="action-btn edit" onclick="editAutomation('tool-ranking')">编辑</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>收益报告生成</td>
+                            <td>每周一早上9点</td>
+                            <td>发送周报邮件</td>
+                            <td><span class="status-badge active">启用</span></td>
+                            <td class="table-actions">
+                                <button class="action-btn edit" onclick="editAutomation('weekly-report')">编辑</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 系统设置页面 -->
+        <div id="settings" class="page-content">
+            <div class="header">
+                <h1 class="page-title">系统设置</h1>
+            </div>
+
+            <div class="data-table">
+                <div class="table-header">
+                    <h3 class="table-title">基本设置</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>设置项</th>
+                            <th>当前值</th>
+                            <th>说明</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>网站标题</td>
+                            <td>AI工具导航站</td>
+                            <td>显示在浏览器标题栏</td>
+                            <td class="table-actions">
+                                <button class="action-btn edit" onclick="editSetting('site-title')">编辑</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>默认佣金比例</td>
+                            <td>10%</td>
+                            <td>新工具的默认佣金比例</td>
+                            <td class="table-actions">
+                                <button class="action-btn edit" onclick="editSetting('default-commission')">编辑</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>数据保留期</td>
+                            <td>90天</td>
+                            <td>用户数据保留时间</td>
+                            <td class="table-actions">
+                                <button class="action-btn edit" onclick="editSetting('data-retention')">编辑</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
     <script>
-        // 全局变量
-        let products = [];
-        let currentProductId = null;
-        let salesChart = null;
-        let categoryChart = null;
-        
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            loadProducts();
-            loadDashboardData();
-            initCharts();
-        });
-        
-        // 切换标签页
-        function switchTab(tabName) {
-            // 更新标签状态
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelector(`.tab:nth-child(${getTabIndex(tabName) + 1})`).classList.add('active');
-            
-            // 更新内容显示
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tabName).classList.add('active');
-            
-            // 如果切换到数据分析标签，更新图表
-            if (tabName === 'analytics') {
-                updateCharts();
-            }
-        }
-        
-        function getTabIndex(tabName) {
-            const tabs = ['products', 'analytics', 'settings'];
-            return tabs.indexOf(tabName);
-        }
-        
-        // 加载产品数据
-        async function loadProducts() {
-            try {
-                const response = await fetch('/api/products');
-                const data = await response.json();
-                
-                if (data.success) {
-                    products = data.data.allProducts || [];
-                    renderProductTable();
-                } else {
-                    showNotification('加载产品数据失败', 'error');
-                }
-            } catch (error) {
-                console.error('加载产品数据失败:', error);
-                showNotification('加载产品数据失败', 'error');
-            }
-        }
-        
-        // 渲染产品表格
-        function renderProductTable() {
-            const tbody = document.getElementById('productTableBody');
-            tbody.innerHTML = '';
-            
-            products.forEach(product => {
-                const row = document.createElement('tr');
-                
-                // 判断产品状态
-                let status = 'normal';
-                let statusText = '正常';
-                
-                if (product.sales < 100) {
-                    status = 'warning';
-                    statusText = '销量低';
-                }
-                
-                if (product.rating < 4.0) {
-                    status = 'danger';
-                    statusText = '评分低';
-                }
-                
-                row.innerHTML = `
-                    <td>${product.name}</td>
-                    <td>${product.category}</td>
-                    <td>¥${product.currentPrice}</td>
-                    <td>${product.commissionRate}%</td>
-                    <td>${product.sales}</td>
-                    <td><span class="status-badge status-${status}">${statusText}</span></td>
-                    <td>
-                        <button class="btn" onclick="viewProduct('${product.id}')">查看</button>
-                    </td>
-                `;
-                
-                tbody.appendChild(row);
-            });
-        }
-        
-        // 加载仪表板数据
-        async function loadDashboardData() {
-            try {
-                // 模拟数据，实际应从API获取
-                document.getElementById('totalProducts').textContent = products.length || 0;
-                document.getElementById('todayClicks').textContent = Math.floor(Math.random() * 1000) + 100;
-                document.getElementById('estimatedCommission').textContent = `¥${Math.floor(Math.random() * 10000) + 1000}`;
-                document.getElementById('abnormalProducts').textContent = products.filter(p => p.sales < 100 || p.rating < 4.0).length || 0;
-            } catch (error) {
-                console.error('加载仪表板数据失败:', error);
-            }
-        }
-        
-        // 初始化图表
-        function initCharts() {
-            // 销售趋势图
-            const salesCtx = document.getElementById('salesChart').getContext('2d');
-            salesChart = new Chart(salesCtx, {
-                type: 'line',
-                data: {
-                    labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
-                    datasets: [{
-                        label: '销售额',
-                        data: [12000, 19000, 15000, 25000, 22000, 30000],
-                        backgroundColor: 'rgba(72, 219, 251, 0.2)',
-                        borderColor: '#48dbfb',
-                        borderWidth: 2,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: '#fff'
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            ticks: {
-                                color: '#ccc'
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: '#ccc'
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        }
-                    }
-                }
+        // 页面切换
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
             });
             
-            // 类别分布图
-            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-            categoryChart = new Chart(categoryCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['智能家居', '健康科技', '厨房电器', '办公设备', '安防设备'],
-                    datasets: [{
-                        data: [30, 25, 20, 15, 10],
-                        backgroundColor: [
-                            '#48dbfb',
-                            '#a29bfe',
-                            '#ff6b6b',
-                            '#feca57',
-                            '#1dd1a1'
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: {
-                                color: '#fff'
-                            }
-                        }
-                    }
-                }
+            // 移除所有导航项的active类
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
             });
-        }
-        
-        // 更新图表
-        function updateCharts() {
-            // 这里可以根据实际数据更新图表
-            // 现在使用模拟数据
-        }
-        
-        // 查看产品详情
-        function viewProduct(productId) {
-            currentProductId = productId;
-            const product = products.find(p => p.id === productId);
             
-            if (product) {
-                const detailsHtml = `
-                    <div class="form-group">
-                        <label>产品名称</label>
-                        <input type="text" value="${product.name}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>产品类别</label>
-                        <input type="text" value="${product.category}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>当前价格</label>
-                        <input type="text" value="¥${product.currentPrice}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>原价</label>
-                        <input type="text" value="¥${product.originalPrice}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>佣金率</label>
-                        <input type="text" value="${product.commissionRate}%" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>销量</label>
-                        <input type="text" value="${product.sales}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>评分</label>
-                        <input type="text" value="${product.rating}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>联盟链接</label>
-                        <input type="text" value="${product.affiliateLink}" readonly>
-                    </div>
-                `;
-                
-                document.getElementById('productDetails').innerHTML = detailsHtml;
-                document.getElementById('productModal').style.display = 'flex';
-            }
-        }
-        
-        // 关闭模态框
-        function closeModal() {
-            document.getElementById('productModal').style.display = 'none';
-            currentProductId = null;
-        }
-        
-        // 将产品加入黑名单
-        async function blacklistProduct() {
-            if (!currentProductId) return;
+            // 显示选中的页面
+            document.getElementById(pageId).classList.add('active');
             
-            try {
-                const response = await fetch(`/api/products/${currentProductId}/blacklist`, {
-                    method: 'POST'
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    showNotification('产品已加入黑名单');
-                    closeModal();
-                    loadProducts();
-                } else {
-                    showNotification('操作失败', 'error');
-                }
-            } catch (error) {
-                console.error('加入黑名单失败:', error);
-                showNotification('操作失败', 'error');
-            }
+            // 添加active类到对应的导航项
+            event.target.closest('.nav-item').classList.add('active');
+            
+            // 加载页面数据
+            loadPageData(pageId);
         }
-        
-        // 更新产品
-        async function updateProducts() {
-            try {
-                showNotification('正在更新产品数据...');
-                
-                const response = await fetch('/api/update-products', {
-                    method: 'POST'
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    showNotification('产品数据更新成功');
-                    loadProducts();
+
+        // 加载页面数据
+        function loadPageData(pageId) {
+            switch(pageId) {
+                case 'dashboard':
                     loadDashboardData();
-                } else {
-                    showNotification('更新失败', 'error');
-                }
-            } catch (error) {
-                console.error('更新产品失败:', error);
-                showNotification('更新失败', 'error');
+                    break;
+                case 'tools':
+                    loadToolsData();
+                    break;
+                case 'commission':
+                    loadCommissionData();
+                    break;
+                case 'analytics':
+                    loadAnalyticsData();
+                    break;
+                case 'automation':
+                    loadAutomationData();
+                    break;
+                case 'settings':
+                    loadSettingsData();
+                    break;
             }
         }
-        
-        // 保存设置
-        async function saveSettings() {
-            try {
-                const settings = {
-                    autoUpdate: document.getElementById('autoUpdate').value === 'true',
-                    updateSchedule: document.getElementById('updateSchedule').value,
-                    maxProductsPerCategory: parseInt(document.getElementById('maxProductsPerCategory').value),
-                    minCommissionRate: parseInt(document.getElementById('minCommissionRate').value)
-                };
-                
-                const response = await fetch('/api/config', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(settings)
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    showNotification('设置保存成功');
-                } else {
-                    showNotification('保存失败', 'error');
-                }
-            } catch (error) {
-                console.error('保存设置失败:', error);
-                showNotification('保存失败', 'error');
+
+        // 加载仪表板数据
+        function loadDashboardData() {
+            // 这里应该从API获取真实数据
+            console.log('Loading dashboard data...');
+        }
+
+        // 加载工具数据
+        function loadToolsData() {
+            // 这里应该从API获取真实数据
+            console.log('Loading tools data...');
+        }
+
+        // 加载收益数据
+        function loadCommissionData() {
+            // 这里应该从API获取真实数据
+            console.log('Loading commission data...');
+        }
+
+        // 加载用户分析数据
+        function loadAnalyticsData() {
+            // 这里应该从API获取真实数据
+            console.log('Loading analytics data...');
+        }
+
+        // 加载自动化数据
+        function loadAutomationData() {
+            // 这里应该从API获取真实数据
+            console.log('Loading automation data...');
+        }
+
+        // 加载设置数据
+        function loadSettingsData() {
+            // 这里应该从API获取真实数据
+            console.log('Loading settings data...');
+        }
+
+        // 刷新数据
+        function refreshData() {
+            loadDashboardData();
+            showNotification('数据已刷新');
+        }
+
+        // 导出数据
+        function exportData() {
+            // 这里应该实现数据导出功能
+            showNotification('正在导出数据...');
+        }
+
+        // 添加新工具
+        function addNewTool() {
+            // 这里应该打开添加工具的模态框
+            showNotification('添加工具功能开发中...');
+        }
+
+        // 编辑工具
+        function editTool(toolId) {
+            // 这里应该打开编辑工具的模态框
+            showNotification(`编辑工具: ${toolId}`);
+        }
+
+        // 删除工具
+        function deleteTool(toolId) {
+            if (confirm(`确定要删除工具 ${toolId} 吗？`)) {
+                // 这里应该调用删除API
+                showNotification(`工具 ${toolId} 已删除`);
             }
         }
-        
+
+        // 过滤工具
+        function filterTools(filter) {
+            console.log(`Filtering tools by: ${filter}`);
+            // 这里应该实现工具过滤逻辑
+        }
+
+        // 过滤热门工具
+        function filterTopTools(filter) {
+            console.log(`Filtering top tools by: ${filter}`);
+            // 这里应该实现热门工具过滤逻辑
+        }
+
+        // 刷新收益数据
+        function refreshCommissionData() {
+            loadCommissionData();
+            showNotification('收益数据已刷新');
+        }
+
+        // 编辑自动化规则
+        function editAutomation(ruleId) {
+            showNotification(`编辑自动化规则: ${ruleId}`);
+        }
+
+        // 编辑设置
+        function editSetting(settingId) {
+            showNotification(`编辑设置: ${settingId}`);
+        }
+
         // 显示通知
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.style.background = type === 'error' ? 
-                'rgba(231, 76, 60, 0.9)' : 'rgba(46, 204, 113, 0.9)';
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
+        function showNotification(message) {
+            // 这里应该实现一个更好的通知系统
+            alert(message);
         }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载初始数据
+            loadDashboardData();
+            
+            // 设置定时刷新
+            setInterval(() => {
+                if (document.getElementById('dashboard').classList.contains('active')) {
+                    loadDashboardData();
+                }
+            }, 30000); // 每30秒刷新一次仪表板数据
+        });
     </script>
 </body>
 </html>
