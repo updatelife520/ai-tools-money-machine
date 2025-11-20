@@ -1,80 +1,87 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import Header from './components/Header';
-import Hero from './components/Hero';
-import ProblemSolver from './components/ProblemSolver';
-import ToolsGrid from './components/ToolsGrid';
-import PricingSection from './components/PricingSection';
-import Footer from './components/Footer';
-import LoadingScreen from './components/LoadingScreen';
-import MediaManager from './components/MediaManager';
-import PaymentManager from './components/PaymentManager';
-import AdminPanel from './components/AdminPanel';
-import AutomationDashboard from './components/AutomationDashboard';
-import CommissionSystem from './components/CommissionSystem';
+
+// 用户端组件 - 简洁清晰
+import UserHeader from './components/user/UserHeader';
+import UserHero from './components/user/UserHero';
+import ProblemSolver from './components/user/ProblemSolver';
+import ToolsGrid from './components/user/ToolsGrid';
+import UserFooter from './components/user/UserFooter';
+
+// 管理端组件 - 后台功能
+import AdminPanel from './components/admin/AdminPanel';
+
+// 核心业务逻辑 - 隐藏在后台
+import CommissionTracker from './components/business/CommissionTracker';
+import SmartLinkRedirect from './components/business/SmartLinkRedirect';
+import { CommissionTracker as CommissionTrackerClass } from './components/business/CommissionTracker';
+import { SmartLinkRedirect as SmartLinkRedirectClass } from './components/business/SmartLinkRedirect';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [showAutomationDashboard, setShowAutomationDashboard] = useState(false);
+  const [currentPage, setCurrentPage] = useState('user');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
-
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+    // 快速初始化，不阻塞UI
+    const initApp = () => {
+      // 检查是否在管理页面
+      if (window.location.pathname.includes('/admin')) {
+        setCurrentPage('admin');
+        setIsAdmin(true);
+      }
+      
+      // 异步初始化商业逻辑（用户无感知）
+      CommissionTrackerClass.initialize();
+      SmartLinkRedirectClass.initialize();
+      
+      setIsInitialized(true);
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
+    // 使用 requestAnimationFrame 确保DOM已渲染
+    requestAnimationFrame(initApp);
   }, []);
 
-  if (isLoading) {
-    return <LoadingScreen />;
+  // 快速加载状态
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white mb-4"></div>
+          <p className="text-white text-lg">加载中...</p>
+        </div>
+      </div>
+    );
   }
 
-  return (
-    <div className="min-h-screen bg-gray-900 relative overflow-hidden">
-      {/* 自动化控制面板 */}
-      {showAutomationDashboard && <AutomationDashboard />}
-      
-      {/* 媒体管理器 - 背景和音乐 */}
-      <MediaManager />
-      
-      {/* 支付管理器 */}
-      <PaymentManager />
-      
-      {/* 管理后台 */}
-      <AdminPanel />
-      
-      {/* 收益统计系统 */}
-      <CommissionSystem />
-
-      {/* 自动化控制按钮 */}
-      <button
-        onClick={() => setShowAutomationDashboard(!showAutomationDashboard)}
-        className="fixed top-20 right-4 z-40 px-3 py-2 bg-gradient-to-r from-green-600 to-blue-600 text-white text-sm rounded-lg hover:from-green-700 hover:to-blue-700 shadow-lg transform hover:scale-105 transition-all duration-300"
-      >
-        🤖 自动化
-      </button>
-
-      {/* 主要内容 */}
-      <div className="relative z-10">
-        <Header />
-        <Hero />
+  // 用户端界面 - 专注工具推荐
+  if (currentPage === 'user') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        {/* 商业逻辑组件 - 用户不可见 */}
+        <CommissionTracker />
+        <SmartLinkRedirect />
+        
+        {/* 用户界面 - 简洁清晰 */}
+        <UserHeader />
+        <UserHero />
         <ProblemSolver />
         <ToolsGrid />
-        <PricingSection />
-        <Footer />
+        <UserFooter />
       </div>
-    </div>
-  );
+    );
+  }
+
+  // 管理端界面 - 专注收益管理
+  if (currentPage === 'admin' && isAdmin) {
+    return (
+      <div className="min-h-screen bg-gray-100">
+        <AdminPanel />
+      </div>
+    );
+  }
+
+  return <div>Loading...</div>;
 }
 
 export default App;

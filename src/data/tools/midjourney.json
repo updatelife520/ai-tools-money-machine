@@ -1,0 +1,18 @@
+{
+  "id": "midjourney",
+  "name": "Midjourney",
+  "category": "design",
+  "type": "paid",
+  "description": "强大的AI图像生成工具",
+  "features": [
+    "艺术创作",
+    "照片级真实感",
+    "风格转换",
+    "批量生成"
+  ],
+  "directUrl": "https://midjourney.com",
+  "affiliateUrl": "https://midjourney.com?affiliate=aitools",
+  "commissionRate": 15,
+  "status": "active",
+  "createdAt": "2025-11-20T02:15:39.160Z"
+}
